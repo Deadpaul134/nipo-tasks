@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0f">
+<title>המשימות שלי · סושיאל</title>
+<style>
+  :root{
+    --bg:#0b0b0f; --card:#15151c; --card2:#1b1b24; --line:#2a2a36;
+    --text:#f2f2f7; --muted:#9a9aab; --accent:#8B5CF6; --accent-soft:rgba(139,92,246,.16);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text)}
+  body{
+    font-family:"Heebo","Rubik","IBM Plex Sans Hebrew","Assistant","Segoe UI","Arial Hebrew",
+      -apple-system,BlinkMacSystemFont,"Noto Sans Hebrew",Roboto,Arial,sans-serif;
+    font-size:18px;line-height:1.55;-webkit-font-smoothing:antialiased;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:22px 16px 48px}
+  header{margin-bottom:18px}
+  h1{font-size:30px;line-height:1.2;margin:0 0 4px;font-weight:800;letter-spacing:-.01em}
+  h1 .dot{color:var(--accent)}
+  .sub{color:var(--muted);font-size:15px;margin:0 0 14px}
+  .progress{display:flex;align-items:center;gap:12px}
+  .bar{flex:1;height:10px;background:var(--card2);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a78bfa,var(--accent));border-radius:99px;transition:width .35s ease}
+  .count{font-size:15px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .count b{color:var(--text)}
+
+  .status{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 16px}
+  .pill{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:9px 12px;font-size:14px;line-height:1.35}
+  .pill b{font-weight:700;font-size:15px}
+  .pill span{grid-column:2;color:var(--muted)}
+  .pill::before{content:"";grid-row:1;width:8px;height:8px;border-radius:50%;background:var(--c,#666)}
+  @media (min-width:900px){ .status{grid-template-columns:repeat(4,1fr)} }
+  .pill.ready{--c:#34d399}.pill.shoot{--c:#fbbf24}.pill.story{--c:var(--accent)}.pill.reshoot{--c:#60a5fa}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 16px 8px;margin:0 0 14px}
+  .card h2{font-size:20px;margin:0 0 6px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .card h2 .n{margin-inline-start:auto;font-size:13px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+  .card.hot{border-color:var(--accent);background:linear-gradient(180deg,rgba(139,92,246,.18),rgba(139,92,246,.05) 60%),var(--card);
+    box-shadow:0 0 0 1px rgba(139,92,246,.25),0 10px 30px -12px rgba(139,92,246,.55)}
+  .card.hot h2::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+
+  ul{list-style:none;margin:0;padding:0}
+  li+li{border-top:1px solid var(--line)}
+  label.task{display:flex;align-items:flex-start;gap:14px;padding:14px 2px;cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:56px}
+  label.task input{position:absolute;opacity:0;pointer-events:none}
+  .box{flex:0 0 30px;width:30px;height:30px;border-radius:9px;border:2px solid #4a4a5c;display:grid;place-items:center;transition:.15s;margin-top:-1px}
+  .box svg{width:18px;height:18px;opacity:0;transform:scale(.6);transition:.15s}
+  label.task input:checked + .box{background:var(--accent);border-color:var(--accent)}
+  label.task input:checked + .box svg{opacity:1;transform:none}
+  label.task input:focus-visible + .box{outline:3px solid rgba(139,92,246,.6);outline-offset:2px}
+  .txt{flex:1;font-size:18px}
+  .txt small{display:block;color:var(--muted);font-size:15px;margin-top:2px}
+  label.task input:checked ~ .txt{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.45);color:var(--muted)}
+
+  details.card{padding-bottom:12px;opacity:.6}
+  details.card[open]{padding-bottom:8px}
+  details summary{list-style:none;cursor:pointer;font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px;min-height:32px}
+  details summary::-webkit-details-marker{display:none}
+  details summary .chev{transition:transform .2s;color:var(--muted)}
+  details[open] summary .chev{transform:rotate(-90deg)}
+  details summary .n{margin-inline-start:auto;font-size:13px;font-weight:500;color:var(--muted)}
+  details ul{margin-top:6px}
+  footer{color:var(--muted);font-size:13px;text-align:center;margin-top:22px}
+  @media (min-width:900px){
+    .wrap{max-width:1100px;padding-top:40px}
+    h1{font-size:38px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+    .grid .card{margin:0}
+    .grid .hot,.grid details.card{grid-column:1/-1}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>המשימות שלי <span class="dot">·</span> סושיאל</h1>
+    <p class="sub">עודכן: <bdi dir="ltr">28.09.2026, 21:30</bdi></p>
+    <div class="progress" aria-label="התקדמות">
+      <div class="bar"><i id="barFill"></i></div>
+      <div class="count" id="count"></div>
+    </div>
+  </header>
+  <nav class="status" id="status" aria-label="סטטוס פרקים"></nav>
+  <main class="grid" id="sections"></main>
+  <footer>הסימונים נשמרים במכשיר הזה</footer>
+</div>
+
+<script>
+/* ===== כל הנתונים כאן — לעדכן רק את המערכים האלה ===== */
+const SECTIONS = [
+  { id:"now", title:"עכשיו · חוסם את פרק 1", highlight:true, tasks:[
+    { id:"ep1-guess-take", text:"טייק שאלת הניחוש מול מצלמה", note:"קול ותמונה יחד, בערך 3 שניות" },
+    { id:"ep1-shot5-screen", text:"שוט 5: הקלטת מסך של תיבת הדואר והקוד" },
+  ]},
+  { id:"ep2", title:"פרק 2", tasks:[
+    { id:"ep2-robot-map", text:"לצלם את הרובוט מצייר את מפת החלקים על הבריסטול", note:"טוש שחור עבה" },
+  ]},
+  { id:"ep0", title:"פרק 0 · לא דחוף", tasks:[
+    { id:"ep0-reshoot-talking", text:"לצלם מחדש רק את קטעי הדיבור מול המצלמה" },
+    { id:"ep0-chat-close-screen", text:"הקלטת מסך נקייה של חלונות הצ'אט נסגרים" },
+  ]},
+  { id:"gadi", title:"סיפורים לגדי", tasks:[
+    { id:"story-ep4-hand", text:"פרק 4: הוא רואה את היד שלי" },
+    { id:"story-ep5-offline", text:"פרק 5: ניתקתי את האינטרנט", note:"לבדוק עם מני שאפשר להראות את המודל החיצוני כבוי" },
+    { id:"story-ep6-body", text:"פרק 6: תכננתי לו גוף" },
+  ]},
+  { id:"small", title:"החלטות קטנות", tasks:[
+    { id:"decide-bio", text:"לבחור ביו" },
+    { id:"decide-test-take", text:"טייק ניסיון של 20 שניות מול מצלמה", note:"טיפים מרועי" },
+  ]},
+  { id:"done", title:"הושלם", collapsed:true, tasks:[
+    { id:"done-expenses-blur", text:"סכומי ההוצאות ותמונה מטושטשת", done:true },
+    { id:"done-ep1-vo-fixes", text:"תיקוני קריינות לפרק 1", done:true },
+    { id:"done-cover-style", text:"בחירת סגנון כריכות (טוש)", done:true },
+  ]},
+];
+const EPISODE_STATUS = [
+  { ep:"פרק 1", status:"כמעט מוכן לעריכה", kind:"ready" },
+  { ep:"פרק 2", status:"מחכה לצילום", kind:"shoot" },
+  { ep:"פרקים 4–6", status:"מחכים לסיפור", kind:"story" },
+  { ep:"פרק 0", status:"מחכה לצילום חוזר", kind:"reshoot" },
+];
+/* ====================================================== */
+
+const KEY = "paul-social-tasks-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
+const isDone = t => (t.id in state) ? state[t.id] : !!t.done;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+/* טקסט לתצוגה: מבודד מספרים/טווחים (4–6, תאריכים) כדי שיוצגו נכון ב-RTL */
+const txt = s => esc(s).replace(/(\d+(?:[–\-.:,]\s?\d+)+)/g, '<bdi dir="ltr">$1</bdi>');
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+document.getElementById("status").innerHTML = EPISODE_STATUS.map(s =>
+  `<div class="pill ${s.kind}"><b>${txt(s.ep)}</b><span>${txt(s.status)}</span></div>`).join("");
+
+function taskHTML(t){
+  return `<li><label class="task"><input type="checkbox" data-id="${esc(t.id)}" ${isDone(t)?"checked":""}>
+    <span class="box">${CHECK}</span>
+    <span class="txt">${txt(t.text)}${t.note?`<small>${txt(t.note)}</small>`:""}</span></label></li>`;
+}
+function render(){
+  document.getElementById("sections").innerHTML = SECTIONS.map(s => {
+    const list = `<ul>${s.tasks.map(taskHTML).join("")}</ul>`;
+    const n = `<span class="n" data-sec="${s.id}"></span>`;
+    if (s.collapsed) return `<details class="card" id="sec-${s.id}"><summary><span class="chev">‹</span>${txt(s.title)}${n}</summary>${list}</details>`;
+    return `<section class="card${s.highlight?" hot":""}" id="sec-${s.id}"><h2>${txt(s.title)}${n}</h2>${list}</section>`;
+  }).join("");
+  update();
+}
+function update(){
+  const all = SECTIONS.flatMap(s => s.tasks);
+  const done = all.filter(isDone).length;
+  document.getElementById("barFill").style.width = (all.length ? done/all.length*100 : 0) + "%";
+  document.getElementById("count").innerHTML = `<b>${done}</b> מתוך ${all.length} בוצעו`;
+  SECTIONS.forEach(s => {
+    const el = document.querySelector(`[data-sec="${s.id}"]`);
+    if (el) el.textContent = `${s.tasks.filter(isDone).length}/${s.tasks.length}`;
+  });
+}
+document.addEventListener("change", e => {
+  const id = e.target.dataset && e.target.dataset.id;
+  if (!id) return;
+  state[id] = e.target.checked;
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(err) {}
+  update();
+});
+render();
+</script>
+</body>
+</html>
