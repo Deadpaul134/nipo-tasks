@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b0b0f">
-<title>המשימות שלי · סושיאל</title>
+<title>המשימות שלי</title>
 <style>
   :root{
     --bg:#0b0b0f; --card:#15151c; --card2:#1b1b24; --line:#2a2a36;
@@ -36,7 +36,6 @@
   .pill span{grid-column:2;color:var(--muted)}
   .pill::before{content:"";grid-row:1;width:8px;height:8px;border-radius:50%;background:var(--c,#666)}
   @media (min-width:900px){ .status{grid-template-columns:repeat(4,1fr)} }
-  .pill.ready{--c:#34d399}.pill.shoot{--c:#fbbf24}.pill.story{--c:var(--accent)}.pill.reshoot{--c:#60a5fa}
 
   .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 16px 8px;margin:0 0 14px}
   .card h2{font-size:20px;margin:0 0 6px;font-weight:700;display:flex;align-items:center;gap:8px}
@@ -74,103 +73,145 @@
     .grid .card{margin:0}
     .grid .hot,.grid details.card{grid-column:1/-1}
   }
+
+  .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin:0 0 16px}
+  .tabs button{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-size:16px;font-weight:600;
+    padding:9px 6px;border-radius:10px;cursor:pointer;min-height:42px;-webkit-tap-highlight-color:transparent}
+  .tabs button[aria-selected="true"]{background:var(--accent);color:#fff}
+  .tabs button:focus-visible{outline:3px solid rgba(139,92,246,.6);outline-offset:2px}
+  .track{margin:0 0 10px}
+  .track+.track{border-top:1px solid var(--line);margin-top:18px}
+  .track-h{display:flex;align-items:baseline;gap:10px;font-size:24px;font-weight:800;margin:22px 0 12px}
+  .track-h:first-child{margin-top:4px}
+  .track-h small{font-size:14px;font-weight:500;color:var(--muted)}
+  .track-h .n{margin-inline-start:auto;font-size:13px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+  .msg{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 16px;color:var(--muted);text-align:center}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>המשימות שלי <span class="dot">·</span> סושיאל</h1>
-    <p class="sub">עודכן: <bdi dir="ltr">28.09.2026, 21:30</bdi></p>
+    <h1>המשימות שלי <span class="dot">·</span> <span id="viewTitle">הכול</span></h1>
+    <p class="sub">עודכן: <bdi dir="ltr" id="updated">…</bdi></p>
     <div class="progress" aria-label="התקדמות">
       <div class="bar"><i id="barFill"></i></div>
       <div class="count" id="count"></div>
     </div>
   </header>
-  <nav class="status" id="status" aria-label="סטטוס פרקים"></nav>
-  <main class="grid" id="sections"></main>
+  <nav class="tabs" role="tablist" aria-label="תצוגה">
+    <button role="tab" data-view="social" aria-selected="false">סושיאל</button>
+    <button role="tab" data-view="dev" aria-selected="false">פיתוח</button>
+    <button role="tab" data-view="all" aria-selected="true">הכול</button>
+  </nav>
+  <main id="tracks"><div class="msg">טוען…</div></main>
   <footer>הסימונים נשמרים במכשיר הזה</footer>
 </div>
 
 <script>
-/* ===== כל הנתונים כאן — לעדכן רק את המערכים האלה ===== */
-const SECTIONS = [
-  { id:"now", title:"עכשיו · חוסם את פרק 1", highlight:true, tasks:[
-    { id:"ep1-guess-take", text:"טייק שאלת הניחוש מול מצלמה", note:"קול ותמונה יחד, בערך 3 שניות" },
-    { id:"ep1-shot5-screen", text:"שוט 5: הקלטת מסך של תיבת הדואר והקוד" },
-  ]},
-  { id:"ep2", title:"פרק 2", tasks:[
-    { id:"ep2-robot-map", text:"לצלם את הרובוט מצייר את מפת החלקים על הבריסטול", note:"טוש שחור עבה" },
-  ]},
-  { id:"ep0", title:"פרק 0 · לא דחוף", tasks:[
-    { id:"ep0-reshoot-talking", text:"לצלם מחדש רק את קטעי הדיבור מול המצלמה" },
-    { id:"ep0-chat-close-screen", text:"הקלטת מסך נקייה של חלונות הצ'אט נסגרים" },
-  ]},
-  { id:"gadi", title:"סיפורים לגדי", tasks:[
-    { id:"story-ep4-hand", text:"פרק 4: הוא רואה את היד שלי" },
-    { id:"story-ep5-offline", text:"פרק 5: ניתקתי את האינטרנט", note:"לבדוק עם מני שאפשר להראות את המודל החיצוני כבוי" },
-    { id:"story-ep6-body", text:"פרק 6: תכננתי לו גוף" },
-  ]},
-  { id:"small", title:"החלטות קטנות", tasks:[
-    { id:"decide-bio", text:"לבחור ביו" },
-    { id:"decide-test-take", text:"טייק ניסיון של 20 שניות מול מצלמה", note:"טיפים מרועי" },
-  ]},
-  { id:"done", title:"הושלם", collapsed:true, tasks:[
-    { id:"done-expenses-blur", text:"סכומי ההוצאות ותמונה מטושטשת", done:true },
-    { id:"done-ep1-vo-fixes", text:"תיקוני קריינות לפרק 1", done:true },
-    { id:"done-cover-style", text:"בחירת סגנון כריכות (טוש)", done:true },
-  ]},
-];
-const EPISODE_STATUS = [
-  { ep:"פרק 1", status:"כמעט מוכן לעריכה", kind:"ready" },
-  { ep:"פרק 2", status:"מחכה לצילום", kind:"shoot" },
-  { ep:"פרקים 4–6", status:"מחכים לסיפור", kind:"story" },
-  { ep:"פרק 0", status:"מחכה לצילום חוזר", kind:"reshoot" },
-];
-/* ====================================================== */
-
+/* הנתונים נטענים מ-tasks.json (ראו AGENTS.md). אין לערוך נתונים כאן. */
 const KEY = "paul-social-tasks-v1";
+let DATA = null;
+let view = ["social","dev","all"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "all";
+
+/* סימונים מקומיים של פול = דריסות מעל done שב-JSON.
+   פורמט חדש: {v:bool, base:bool} — base הוא ערך done ב-JSON ברגע הסימון.
+   אם הסוכן שינה את done מאז, הדריסה מתבטלת וה-JSON קובע. ערך בוליאני ישן נשמר כמו שהוא. */
 let state = {};
 try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e) {}
-const isDone = t => (t.id in state) ? state[t.id] : !!t.done;
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} };
+const isDone = t => {
+  const o = state[t.id], base = !!t.done;
+  if (o === undefined) return base;
+  if (typeof o === "boolean") return o;
+  if (o && typeof o === "object" && o.base === base) return !!o.v;
+  return base;
+};
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* טקסט לתצוגה: מבודד מספרים/טווחים (4–6, תאריכים) כדי שיוצגו נכון ב-RTL */
 const txt = s => esc(s).replace(/(\d+(?:[–\-.:,]\s?\d+)+)/g, '<bdi dir="ltr">$1</bdi>');
 const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const safeColor = c => /^#[0-9a-fA-F]{3,8}$|^[a-zA-Z]+$/.test(c||"") ? c : "#666";
 
-document.getElementById("status").innerHTML = EPISODE_STATUS.map(s =>
-  `<div class="pill ${s.kind}"><b>${txt(s.ep)}</b><span>${txt(s.status)}</span></div>`).join("");
+function fmtUpdated(iso){
+  const d = new Date(iso);
+  if (isNaN(d)) return iso ? String(iso) : "—";
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-GB", {timeZone:"Asia/Jerusalem",
+    day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit", hourCycle:"h23"})
+    .formatToParts(d).map(x => [x.type, x.value]));
+  return `${p.day}.${p.month}.${p.year} ${p.hour}:${p.minute}`;
+}
 
 function taskHTML(t){
-  return `<li><label class="task"><input type="checkbox" data-id="${esc(t.id)}" ${isDone(t)?"checked":""}>
+  return `<li><label class="task"><input type="checkbox" data-id="${esc(t.id)}" data-base="${t.done?1:0}" ${isDone(t)?"checked":""}>
     <span class="box">${CHECK}</span>
     <span class="txt">${txt(t.text)}${t.note?`<small>${txt(t.note)}</small>`:""}</span></label></li>`;
 }
+function sectionHTML(tr, s){
+  const sid = `${tr.id}-${s.id}`;
+  const list = `<ul>${(s.tasks||[]).map(taskHTML).join("")}</ul>`;
+  const n = `<span class="n" data-sec="${esc(sid)}"></span>`;
+  if (s.collapsed) return `<details class="card" id="sec-${esc(sid)}"><summary><span class="chev">‹</span>${txt(s.title)}${n}</summary>${list}</details>`;
+  return `<section class="card${s.highlight?" hot":""}" id="sec-${esc(sid)}"><h2>${txt(s.title)}${n}</h2>${list}</section>`;
+}
+const visibleTracks = () => (DATA.tracks||[]).filter(tr => view === "all" || tr.id === view);
+
 function render(){
-  document.getElementById("sections").innerHTML = SECTIONS.map(s => {
-    const list = `<ul>${s.tasks.map(taskHTML).join("")}</ul>`;
-    const n = `<span class="n" data-sec="${s.id}"></span>`;
-    if (s.collapsed) return `<details class="card" id="sec-${s.id}"><summary><span class="chev">‹</span>${txt(s.title)}${n}</summary>${list}</details>`;
-    return `<section class="card${s.highlight?" hot":""}" id="sec-${s.id}"><h2>${txt(s.title)}${n}</h2>${list}</section>`;
-  }).join("");
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.view === view));
+  const tabBtn = document.querySelector(`.tabs button[data-view="${view}"]`);
+  document.getElementById("viewTitle").textContent = tabBtn ? tabBtn.textContent : "";
+  if (!DATA) return;
+  document.getElementById("updated").textContent = fmtUpdated(DATA.updated);
+  const pills = (DATA.episodes||[]).length ? `<nav class="status" aria-label="סטטוס פרקים">${DATA.episodes.map(e =>
+    `<div class="pill" style="--c:${safeColor(e.color)}"><b>${txt(e.label)}</b><span>${txt(e.status)}</span></div>`).join("")}</nav>` : "";
+  const trs = visibleTracks();
+  document.getElementById("tracks").innerHTML = trs.map(tr => `<div class="track" id="track-${esc(tr.id)}">
+      ${view === "all" ? `<h2 class="track-h">${txt(tr.title)}${tr.owner?`<small>${txt(tr.owner)}</small>`:""}<span class="n" data-track="${esc(tr.id)}"></span></h2>` : ""}
+      ${tr.id === "social" ? pills : ""}
+      <div class="grid">${(tr.sections||[]).map(s => sectionHTML(tr, s)).join("")}</div>
+    </div>`).join("") || `<div class="msg">אין משימות</div>`;
   update();
 }
 function update(){
-  const all = SECTIONS.flatMap(s => s.tasks);
+  if (!DATA) return;
+  const trs = visibleTracks();
+  const all = trs.flatMap(tr => (tr.sections||[]).flatMap(s => s.tasks||[]));
   const done = all.filter(isDone).length;
   document.getElementById("barFill").style.width = (all.length ? done/all.length*100 : 0) + "%";
   document.getElementById("count").innerHTML = `<b>${done}</b> מתוך ${all.length} בוצעו`;
-  SECTIONS.forEach(s => {
-    const el = document.querySelector(`[data-sec="${s.id}"]`);
-    if (el) el.textContent = `${s.tasks.filter(isDone).length}/${s.tasks.length}`;
+  trs.forEach(tr => {
+    const tt = (tr.sections||[]).flatMap(s => s.tasks||[]);
+    const te = document.querySelector(`[data-track="${tr.id}"]`);
+    if (te) te.textContent = `${tt.filter(isDone).length}/${tt.length}`;
+    (tr.sections||[]).forEach(s => {
+      const el = document.querySelector(`[data-sec="${tr.id}-${s.id}"]`);
+      const ts = s.tasks||[];
+      if (el) el.textContent = `${ts.filter(isDone).length}/${ts.length}`;
+    });
   });
 }
 document.addEventListener("change", e => {
   const id = e.target.dataset && e.target.dataset.id;
   if (!id) return;
-  state[id] = e.target.checked;
-  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(err) {}
+  const base = e.target.dataset.base === "1";
+  if (e.target.checked === base) delete state[id];
+  else state[id] = { v: e.target.checked, base };
+  save();
+  document.querySelectorAll(`input[data-id="${CSS.escape(id)}"]`).forEach(i => { if (i !== e.target) i.checked = e.target.checked; });
   update();
 });
+document.querySelector(".tabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-view]");
+  if (!b) return;
+  view = b.dataset.view;
+  history.replaceState(null, "", view === "all" ? location.pathname + location.search : "#" + view);
+  render();
+});
+fetch("tasks.json", {cache:"no-store"})
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(d => { DATA = d; render(); })
+  .catch(err => {
+    document.getElementById("tracks").innerHTML = `<div class="msg">לא הצלחתי לטעון את המשימות (${esc(err.message)}). נסו לרענן.</div>`;
+  });
 render();
 </script>
 </body>
