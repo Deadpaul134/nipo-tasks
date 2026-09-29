@@ -1,10 +1,30 @@
 {
-  "updated": "2026-09-29T06:43:27+03:00",
+  "updated": "2026-09-29T06:44:47+03:00",
   "episodes": [
-    { "id": "ep1", "label": "פרק 1", "status": "כמעט מוכן לעריכה", "color": "#34d399" },
-    { "id": "ep2", "label": "פרק 2", "status": "מחכה לצילום", "color": "#fbbf24" },
-    { "id": "ep4-6", "label": "פרקים 4–6", "status": "מחכים לסיפור", "color": "#8B5CF6" },
-    { "id": "ep0", "label": "פרק 0", "status": "מחכה לצילום חוזר", "color": "#60a5fa" }
+    {
+      "id": "ep1",
+      "label": "פרק 1",
+      "status": "כמעט מוכן לעריכה",
+      "color": "#34d399"
+    },
+    {
+      "id": "ep2",
+      "label": "פרק 2",
+      "status": "מחכה לצילום",
+      "color": "#fbbf24"
+    },
+    {
+      "id": "ep4-6",
+      "label": "פרקים 4–6",
+      "status": "מחכים לסיפור",
+      "color": "#8B5CF6"
+    },
+    {
+      "id": "ep0",
+      "label": "פרק 0",
+      "status": "מחכה לצילום חוזר",
+      "color": "#60a5fa"
+    }
   ],
   "tracks": [
     {
@@ -12,31 +32,104 @@
       "title": "סושיאל",
       "owner": "קנובלר",
       "sections": [
-        { "id": "now", "title": "עכשיו · חוסם את פרק 1", "highlight": true, "tasks": [
-          { "id": "ep1-guess-take", "text": "טייק שאלת הניחוש מול מצלמה", "note": "קול ותמונה יחד, בערך 3 שניות" },
-          { "id": "ep1-shot5-screen", "text": "שוט 5: הקלטת מסך של תיבת הדואר והקוד" }
-        ]},
-        { "id": "ep2", "title": "פרק 2", "tasks": [
-          { "id": "ep2-robot-map", "text": "לצלם את הרובוט מצייר את מפת החלקים על הבריסטול", "note": "טוש שחור עבה" }
-        ]},
-        { "id": "ep0", "title": "פרק 0 · לא דחוף", "tasks": [
-          { "id": "ep0-reshoot-talking", "text": "לצלם מחדש רק את קטעי הדיבור מול המצלמה" },
-          { "id": "ep0-chat-close-screen", "text": "הקלטת מסך נקייה של חלונות הצ'אט נסגרים" }
-        ]},
-        { "id": "gadi", "title": "סיפורים לגדי", "tasks": [
-          { "id": "story-ep4-hand", "text": "פרק 4: הוא רואה את היד שלי" },
-          { "id": "story-ep5-offline", "text": "פרק 5: ניתקתי את האינטרנט", "note": "נבדק עם מני: מותר להראות את המודל החיצוני כבוי, כל עוד לא רואים על המסך שם חשבון, מייל או מפתח", "done": true },
-          { "id": "story-ep6-body", "text": "פרק 6: תכננתי לו גוף" }
-        ]},
-        { "id": "small", "title": "החלטות קטנות", "tasks": [
-          { "id": "decide-bio", "text": "לבחור ביו" },
-          { "id": "decide-test-take", "text": "טייק ניסיון של 20 שניות מול מצלמה", "note": "טיפים מרועי" }
-        ]},
-        { "id": "done", "title": "הושלם", "collapsed": true, "tasks": [
-          { "id": "done-expenses-blur", "text": "סכומי ההוצאות ותמונה מטושטשת", "done": true },
-          { "id": "done-ep1-vo-fixes", "text": "תיקוני קריינות לפרק 1", "done": true },
-          { "id": "done-cover-style", "text": "בחירת סגנון כריכות (טוש)", "done": true }
-        ]}
+        {
+          "id": "now",
+          "title": "עכשיו · חוסם את פרק 1",
+          "highlight": true,
+          "tasks": [
+            {
+              "id": "ep1-guess-take",
+              "text": "טייק שאלת הניחוש מול מצלמה",
+              "note": "קול ותמונה יחד, בערך 3 שניות"
+            },
+            {
+              "id": "ep1-shot5-screen",
+              "text": "שוט 5: הקלטת מסך של תיבת הדואר והקוד"
+            }
+          ]
+        },
+        {
+          "id": "ep2",
+          "title": "פרק 2",
+          "tasks": [
+            {
+              "id": "ep2-robot-map",
+              "text": "לצלם את הרובוט מצייר את מפת החלקים על הבריסטול",
+              "note": "טוש שחור עבה"
+            }
+          ]
+        },
+        {
+          "id": "ep0",
+          "title": "פרק 0 · לא דחוף",
+          "tasks": [
+            {
+              "id": "ep0-reshoot-talking",
+              "text": "לצלם מחדש רק את קטעי הדיבור מול המצלמה"
+            },
+            {
+              "id": "ep0-chat-close-screen",
+              "text": "הקלטת מסך נקייה של חלונות הצ'אט נסגרים"
+            }
+          ]
+        },
+        {
+          "id": "gadi",
+          "title": "סיפורים לגדי",
+          "tasks": [
+            {
+              "id": "story-ep4-hand",
+              "text": "פרק 4: הוא רואה את היד שלי"
+            },
+            {
+              "id": "story-ep5-offline",
+              "text": "פרק 5: ניתקתי את האינטרנט",
+              "note": "מני אישר: מותר להראות את המודל החיצוני כבוי, בלי שם חשבון, מייל או מפתח על המסך",
+              "done": false
+            },
+            {
+              "id": "story-ep6-body",
+              "text": "פרק 6: תכננתי לו גוף"
+            }
+          ]
+        },
+        {
+          "id": "small",
+          "title": "החלטות קטנות",
+          "tasks": [
+            {
+              "id": "decide-bio",
+              "text": "לבחור ביו"
+            },
+            {
+              "id": "decide-test-take",
+              "text": "טייק ניסיון של 20 שניות מול מצלמה",
+              "note": "טיפים מרועי"
+            }
+          ]
+        },
+        {
+          "id": "done",
+          "title": "הושלם",
+          "collapsed": true,
+          "tasks": [
+            {
+              "id": "done-expenses-blur",
+              "text": "סכומי ההוצאות ותמונה מטושטשת",
+              "done": true
+            },
+            {
+              "id": "done-ep1-vo-fixes",
+              "text": "תיקוני קריינות לפרק 1",
+              "done": true
+            },
+            {
+              "id": "done-cover-style",
+              "text": "בחירת סגנון כריכות (טוש)",
+              "done": true
+            }
+          ]
+        }
       ]
     }
   ]
