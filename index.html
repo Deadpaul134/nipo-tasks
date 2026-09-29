@@ -75,6 +75,7 @@
   }
 
   .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin:0 0 16px}
+  .tabs[hidden]{display:none}
   .tabs button{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-size:16px;font-weight:600;
     padding:9px 6px;border-radius:10px;cursor:pointer;min-height:42px;-webkit-tap-highlight-color:transparent}
   .tabs button[aria-selected="true"]{background:var(--accent);color:#fff}
@@ -91,14 +92,14 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>המשימות שלי <span class="dot">·</span> <span id="viewTitle">הכול</span></h1>
+    <h1>המשימות שלי <span class="dot">·</span> <span id="viewTitle">סושיאל</span></h1>
     <p class="sub">עודכן: <bdi dir="ltr" id="updated">…</bdi></p>
     <div class="progress" aria-label="התקדמות">
       <div class="bar"><i id="barFill"></i></div>
       <div class="count" id="count"></div>
     </div>
   </header>
-  <nav class="tabs" role="tablist" aria-label="תצוגה">
+  <nav class="tabs" role="tablist" aria-label="תצוגה" hidden>
     <button role="tab" data-view="social" aria-selected="false">סושיאל</button>
     <button role="tab" data-view="dev" aria-selected="false">פיתוח</button>
     <button role="tab" data-view="all" aria-selected="true">הכול</button>
@@ -155,17 +156,23 @@ function sectionHTML(tr, s){
 }
 const visibleTracks = () => (DATA.tracks||[]).filter(tr => view === "all" || tr.id === view);
 
+/* מסלול אחד בלבד: בלי טאבים ובלי כותרת מסלול, כמו הרשימה המקורית */
+const isSingle = () => !DATA || (DATA.tracks||[]).length <= 1;
 function render(){
+  const single = isSingle();
+  if (single) view = "all";
+  document.querySelector(".tabs").hidden = single;
   document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.view === view));
   const tabBtn = document.querySelector(`.tabs button[data-view="${view}"]`);
-  document.getElementById("viewTitle").textContent = tabBtn ? tabBtn.textContent : "";
+  const only = DATA && (DATA.tracks||[]).length === 1 ? DATA.tracks[0].title : "סושיאל";
+  document.getElementById("viewTitle").textContent = single ? only : (tabBtn ? tabBtn.textContent : "");
   if (!DATA) return;
   document.getElementById("updated").textContent = fmtUpdated(DATA.updated);
   const pills = (DATA.episodes||[]).length ? `<nav class="status" aria-label="סטטוס פרקים">${DATA.episodes.map(e =>
     `<div class="pill" style="--c:${safeColor(e.color)}"><b>${txt(e.label)}</b><span>${txt(e.status)}</span></div>`).join("")}</nav>` : "";
   const trs = visibleTracks();
   document.getElementById("tracks").innerHTML = trs.map(tr => `<div class="track" id="track-${esc(tr.id)}">
-      ${view === "all" ? `<h2 class="track-h">${txt(tr.title)}${tr.owner?`<small>${txt(tr.owner)}</small>`:""}<span class="n" data-track="${esc(tr.id)}"></span></h2>` : ""}
+      ${view === "all" && !isSingle() ? `<h2 class="track-h">${txt(tr.title)}${tr.owner?`<small>${txt(tr.owner)}</small>`:""}<span class="n" data-track="${esc(tr.id)}"></span></h2>` : ""}
       ${tr.id === "social" ? pills : ""}
       <div class="grid">${(tr.sections||[]).map(s => sectionHTML(tr, s)).join("")}</div>
     </div>`).join("") || `<div class="msg">אין משימות</div>`;
