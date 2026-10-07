@@ -173,6 +173,7 @@
   details.sec[open] ul{margin-top:12px}
   details.sec:not([open]){padding-bottom:16px;opacity:.75}
   .sec[hidden]{display:none}
+  .tile[hidden],.qbtn[hidden],.quick[hidden]{display:none}
   body.searching .hero,body.searching .quick,body.searching .stats,body.searching .eps{display:none}
 
   .track-h{display:flex;align-items:baseline;gap:10px;font-family:var(--serif);font-size:24px;margin:22px 2px 12px}
@@ -401,8 +402,13 @@ function render(){
   const multi = tracks().length > 1;
   document.getElementById("tracks").innerHTML = tracks().map(tr => `<div class="track" id="track-${esc(tr.id)}">
       ${multi ? `<h2 class="track-h">${txt(tr.title)}${tr.owner?`<small>${txt(tr.owner)}</small>`:""}</h2>` : ""}
+      ${tr.note ? `<div class="card msg">${txt(tr.note)}</div>` : ""}
       <div class="grid">${(tr.sections||[]).map(s => sectionHTML(tr, s)).join("")}</div>
     </div>`).join("") || `<div class="card msg">אין משימות</div>`;
+  /* קיצורים למקטעים שלא קיימים בנתונים מוסתרים */
+  document.querySelectorAll(".tile").forEach(b => { const t = TILES[+b.dataset.i]; b.hidden = !t.target && !findSection(t.sec, t.label); });
+  document.querySelectorAll(".qbtn").forEach(b => { const t = QUICK[+b.dataset.q]; b.hidden = !findSection(t.sec, t.label); });
+  const qs = document.querySelector(".quick"); if (qs) qs.hidden = ![...document.querySelectorAll(".qbtn")].some(b => !b.hidden);
   update();
   applySearch();
   spy();
